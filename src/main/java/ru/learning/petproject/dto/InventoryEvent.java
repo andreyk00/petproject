@@ -6,21 +6,20 @@ import lombok.*;
  *
  */
 @Data
-//@Builder(toBuilder = true)
-//@Builder
-@RequiredArgsConstructor//(access = AccessLevel.PRIVATE)
-//@NoArgsConstructor//(access = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
+@NoArgsConstructor(force = true)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class InventoryEvent {
 
     /**
      *
      */
-    private Integer inventoryId;
+   private final Integer inventoryId;
 
 
     /**
      *
      */
-    private String name;
+    private final String name;
 
 }

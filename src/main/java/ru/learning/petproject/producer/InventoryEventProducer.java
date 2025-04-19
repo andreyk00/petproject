@@ -1,8 +1,8 @@
 package ru.learning.petproject.producer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -13,18 +13,34 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class InventoryEventProducer {
 
-    @Value(value = "${spring.kafka.topic}")
-    public String topic;
+    @Value("${spring.kafka.topic}")
+    private String topic;
 
-    @Autowired
-    private KafkaTemplate<Integer, Object> kafkaTemplate;
+    private final KafkaTemplate<Integer, InventoryEvent> kafkaTemplate;
 
-    public CompletableFuture<SendResult<Integer, Object>> sendInventoryEvent(InventoryEvent inventoryEvent) throws JsonProcessingException {
-        var key = 1; //inventoryEvent.getInventoryId();
-        var completableFuture = kafkaTemplate.send(topic, key, inventoryEvent);
-        return completableFuture;
+    /**
+     * Отправляет событие в Kafka.
+     *
+     * @param inventoryEvent событие для отправки
+     * @return CompletableFuture для асинхронной обработки результата
+     */
+    public CompletableFuture<SendResult<Integer, InventoryEvent>> sendInventoryEvent(InventoryEvent inventoryEvent) {
+        var key = inventoryEvent.getInventoryId();
+        log.info("Sending event to Kafka topic '{}' with key: {}", topic, key);
+
+        // Отправка сообщения в Kafka
+        return kafkaTemplate.send(topic, key, inventoryEvent)
+                .toCompletableFuture()
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Failed to send message to Kafka topic '{}'", topic, ex);
+                    } else {
+                        log.info("Message sent successfully to Kafka topic '{}' with offset: {}",
+                                topic, result.getRecordMetadata().offset());
+                    }
+                });
     }
-
 }

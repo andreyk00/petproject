@@ -2,20 +2,25 @@ package ru.learning.petproject.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class TestService {
 
-    @Autowired
-    private KafkaTemplate kafkaTemplate;
+    private final KafkaTemplate<?, ?> kafkaTemplate;
 
-    void test() {
-        System.out.println("hello!");
-        System.out.println(kafkaTemplate.getDefaultTopic());
+    public void test() {
+        log.info("Hello from TestService!");
+        String defaultTopic = kafkaTemplate.getDefaultTopic();
+        if (defaultTopic != null) {
+            log.info("Default Kafka topic: {}", defaultTopic);
+        } else {
+            log.warn("Default Kafka topic is not set.");
+        }
     }
-
 }

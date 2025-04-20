@@ -1,6 +1,6 @@
-package ru.learning.petproject.service;
+package ru.learning.petproject.config;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +26,16 @@ public class KafkaProducerConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        System.out.println("producerFactory props created: " + configProps);
+
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
     public KafkaTemplate<Integer, InventoryEvent> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+        var kafkaTemplate = new KafkaTemplate<>(producerFactory());
+        System.out.println("kafkaTemplate created: " + kafkaTemplate);
+
+        return kafkaTemplate;
     }
 }

@@ -36,6 +36,7 @@ public class KafkaConfig {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         logger.info("KafkaAdmin created with bootstrap servers: {}", bootstrapAddress);
+
         return new KafkaAdmin(configs);
     }
 
@@ -45,11 +46,9 @@ public class KafkaConfig {
      */
     @Bean
     public NewTopic inventoryEventsTopic() {
-        logger.info(
-                "Creating topic '{}' with default partitions and replicas",
-                inventoryEventsTopicName
-        );
+        logger.info("Creating topic '{}' with default partitions and replicas", inventoryEventsTopicName);
+        // Создает топик с настройками по умолчанию (1 партиция, 1 реплика)
         return TopicBuilder.name(inventoryEventsTopicName)
-                .build(); // Создает топик с настройками по умолчанию (1 партиция, 1 реплика)
+                .build();
     }
 }

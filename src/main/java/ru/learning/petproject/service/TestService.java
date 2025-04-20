@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TestService {
 
+    @Value("${spring.kafka.topic}")
+    private String topic;
+
     private final KafkaTemplate<?, ?> kafkaTemplate;
 
     public void test() {
         log.info("Hello from TestService!");
+        kafkaTemplate.setDefaultTopic(topic);
         String defaultTopic = kafkaTemplate.getDefaultTopic();
         if (defaultTopic != null) {
             log.info("Default Kafka topic: {}", defaultTopic);

@@ -35,7 +35,7 @@ public class InventoryEventConsumer {
     @KafkaListener(topicPartitions = @TopicPartition(topic = "inventory-event",
             partitionOffsets = {@PartitionOffset(partition = "0", initialOffset = "0")}))
     public void onMessage(ConsumerRecord<Integer, InventoryEventDto> consumerRecord) {
-        log.info("Consumer Record key: {}", consumerRecord.key());
+        //log.info("Consumer Record key: {}", consumerRecord.key());
 
         log.info("Consumer Record: {}", consumerRecord);
     }

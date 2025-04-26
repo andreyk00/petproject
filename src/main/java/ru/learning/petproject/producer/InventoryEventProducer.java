@@ -29,22 +29,25 @@ public class InventoryEventProducer {
 
     @KafkaListener(topicPartitions = @TopicPartition(topic = "inventory-event",
             partitionOffsets = {@PartitionOffset(partition = "0", initialOffset = "0")}))
-    public void onMessage(ConsumerRecord<Integer, InventoryEventDto> consumerRecord) {
+    //public void onMessage(ConsumerRecord<Integer, InventoryEventDto> consumerRecord) {
+    public void onMessage(ConsumerRecord<Integer, String> consumerRecord) {
         try {
-            log.info("Consumer Record key: {}", consumerRecord.key());
-
-            InventoryEventDto eventDto = consumerRecord.value();
+            Integer key = consumerRecord.key();
+            log.info("Consumer Record key: {}", key);
+            //InventoryEventDto eventDto = consumerRecord.value();
+            String eventDto = consumerRecord.value();
             if (eventDto == null) {
                 log.error("Received null value from Kafka");
                 return;
             }
-
             log.info("Consumer Record value: {}", eventDto);
 
             // Преобразуем DTO в сущность для сохранения в базу
             InventoryEvent event = InventoryEvent.builder()
-                    .inventoryId(eventDto.getInventoryId())
-                    .name(eventDto.getName())
+                    //.inventoryId(eventDto.getInventoryId())
+                    //.name(eventDto.getName())
+                    .inventoryId(key)
+                    .name(eventDto)
                     .build();
 
             // Сохраняем данные в базу

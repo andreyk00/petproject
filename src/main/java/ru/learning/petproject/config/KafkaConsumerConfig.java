@@ -26,14 +26,16 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "inventory-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        //props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        //props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
         // Настройка десериализаторов
-        JsonDeserializer<InventoryEventDto> jsonDeserializer = new JsonDeserializer<>(InventoryEventDto.class);
-        jsonDeserializer.addTrustedPackages("*");
+        //JsonDeserializer<InventoryEventDto> jsonDeserializer = new JsonDeserializer<>(InventoryEventDto.class);
+        //jsonDeserializer.addTrustedPackages("*");
 
-        return new DefaultKafkaConsumerFactory<>(props, new IntegerDeserializer(), jsonDeserializer);
+        //return new DefaultKafkaConsumerFactory<>(props, new IntegerDeserializer(), jsonDeserializer);
+        return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean

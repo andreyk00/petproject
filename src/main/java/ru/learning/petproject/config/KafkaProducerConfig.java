@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import ru.learning.petproject.dto.InventoryEvent;
+import ru.learning.petproject.dto.InventoryEventDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,21 +21,16 @@ public class KafkaProducerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<Integer, InventoryEvent> producerFactory() {
+    public ProducerFactory<Integer, InventoryEventDto> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        System.out.println("producerFactory props created: " + configProps);
-
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<Integer, InventoryEvent> kafkaTemplate() {
-        var kafkaTemplate = new KafkaTemplate<>(producerFactory());
-        System.out.println("kafkaTemplate created: " + kafkaTemplate);
-
-        return kafkaTemplate;
+    public KafkaTemplate<Integer, InventoryEventDto> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 }

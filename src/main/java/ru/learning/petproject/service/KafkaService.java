@@ -12,16 +12,17 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
-public class TaskService {
+public class KafkaService {
 
     @Autowired
     private KafkaAdmin kafkaAdmin;
 
-    @Value("${kafka.topic.retention.ms:86400000}") // Default: 24 hours in milliseconds
+    @Value("${kafka.topic.retention.ms:86400000}")
     private long retentionMs;
 
     public void createNewTopic(String topicName, int partitions, short replicas) {
@@ -31,12 +32,18 @@ public class TaskService {
         NewTopic newTopic = new NewTopic(topicName, partitions, replicas).configs(topicConfig);
 
         try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
-            log.info("Creating new Kafka topic: {}", topicName);
-            adminClient.createTopics(Collections.singletonList(newTopic)).all().get();
-            log.info("Successfully created Kafka topic: {}", topicName);
+            // Проверяем, существует ли топик
+            Set<String> existingTopics = adminClient.listTopics().names().get();
+            if (!((Set<?>) existingTopics).contains(topicName)) {
+                log.info("Creating new Kafka topic: {}", topicName);
+                adminClient.createTopics(Collections.singletonList(newTopic)).all().get();
+                log.info("Successfully created Kafka topic: {}", topicName);
+            } else {
+                log.info("Kafka topic '{}' already exists", topicName);
+            }
         } catch (InterruptedException | ExecutionException e) {
             log.error("Failed to create Kafka topic '{}'", topicName, e);
-            Thread.currentThread().interrupt(); // Restore interrupted status
+            Thread.currentThread().interrupt();
         }
     }
 }

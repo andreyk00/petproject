@@ -22,10 +22,6 @@ public class TestService {
         log.info("Hello from TestService!");
         kafkaTemplate.setDefaultTopic(topic);
         String defaultTopic = kafkaTemplate.getDefaultTopic();
-        if (defaultTopic != null) {
-            log.info("Default Kafka topic: {}", defaultTopic);
-        } else {
-            log.warn("Default Kafka topic is not set.");
-        }
+        log.info("Default Kafka topic: {}", defaultTopic);
     }
 }
